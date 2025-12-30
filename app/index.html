@@ -6,11 +6,11 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Ethereum Block Explorer</title>
-  <meta name="description" content="">
+  <title>李继坤的区块链浏览器</title>
+  <meta name="description" content="基于Etherparty Explorer的个性化区块浏览器,支持本地Geth节点连接">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="styles/main.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
   <script src="bower_components/web3/dist/web3.min.js"></script>
 
 </head>
@@ -19,15 +19,15 @@
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
-            <span class="icon-bar"></span><a href="/#/" class="navbar-brand">Ether Block Explorer</a>
+            <span class="icon-bar"></span><a href="/#/" class="navbar-brand">🔍 我的区块链浏览器</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
             <form  name="search_form" ng-controller="mainCtrl" ng-submit="processRequest()"  class="navbar-form navbar-right">
             <div class="form-group">
-            <input type="text" placeholder="Tx Hash, Address or Block number" name="requestType" required  ng-model="ethRequest"  class="form-control"><br>
+            <input type="text" placeholder="请输入交易哈希、地址或区块号" name="requestType" required  ng-model="ethRequest"  class="form-control"><br>
             </div>
-            <button type="submit" class="btn btn-success">Search</button></form>
+            <button type="submit" class="btn btn-success">搜索</button></form>
             </ul>
 	    </div>
     </div>
@@ -39,11 +39,11 @@
 
 <!--Libs-->
 
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/angular.js/1.4.5/angular.min.js"></script>
   <script src="bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
   <script src="bower_components/angular-route/angular-route.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <!--Core-->
   <script src="app.js"></script>
 
@@ -60,7 +60,7 @@
             <!-- Modal content-->
             <div class="modal-content">
                 <center><div class="modal-header">
-                    <h4 class="modal-title">Allow Access to Geth and Refresh the Page</h4>
+                    <h4 class="modal-title">连接到以太坊节点</h4>
                 </div>
                 <div class="modal-body">
                     <code><p id="modaltext"></p></code>
@@ -70,16 +70,143 @@
     </div>
 
 
-<div class="footer" style="bottom: 0px;text-align: center;background-color: white; width:100%;">
+<div class="footer" style="bottom: 0px;text-align: center;background-color: rgb(237, 97, 158); width:100%; padding: 20px 0; border-top: 1px solid #e7e7e7;">
     <footer>
-        <hr>
-        <p>
-            © Etherparty.io 2017 | <a href="http://github.com/etherparty/explorer">Fork me on GitHub</a>
-        </p>
+        <div class="container">
+            <p>
+                © 2025 区块链技术实训项目 | 
+                开发者：李继坤 | 
+                指导老师：某某某 | 
+                基于 <a href="http://github.com/etherparty/explorer" target="_blank">Etherparty Explorer</a>
+            </p>
+            <p style="color: #666; font-size: 12px; margin-top: 5px;">
+                支持本地Geth节点连接 | 网络ID: 202406 | 
+                最后更新:
+                <script>
+                (function() {
+                    var d = new Date();
+                    var timeStr = d.getFullYear() + '-' + 
+                         (d.getMonth()+1).toString().padStart(2,'0') + '-' + 
+                         d.getDate().toString().padStart(2,'0') + ' ' + 
+                         d.getHours().toString().padStart(2,'0') + ':' + 
+                         d.getMinutes().toString().padStart(2,'0');
+            document.write(timeStr);
+        })();
+    </script> 
+            </p>
+        </div>
     </footer>
 </div>
 <script>
-$("#modaltext").text( 'geth --rpc --rpccorsdomain "'+ window.location.protocol + '//' + window.location.host + '"' );
+// 自动连接脚本
+$(document).ready(function() {
+    // 显示合适的Geth命令
+    $("#modaltext").text('geth --http --http.port 8545 --http.corsdomain "*" --http.api "eth,net,web3,personal"');
+    
+    // 自动尝试连接
+    setTimeout(connectToLocalGeth, 1000);
+});
+
+function connectToLocalGeth() {
+    console.log('正在连接到本地Geth节点...');
+    
+    try {
+        var web3 = new Web3('http://localhost:8545');
+        
+        // 测试连接
+        web3.eth.getBlockNumber(function(err, blockNumber) {
+            if (err) {
+                console.error('连接失败:', err);
+                $('#status-text').text('❌ 连接失败');
+                $('#error-message').text('错误: ' + err.message).show();
+                $('#connectwarning').modal('show');
+            } else {
+                console.log('✅ 连接成功! 当前区块:', blockNumber);
+                $('#status-text').text('✅ 已连接到本地Geth节点');
+                $('#error-message').hide();
+                
+                // 设置全局web3
+                window.web3 = web3;
+                
+                // 3秒后自动隐藏模态框
+                setTimeout(function() {
+                    $('#connectwarning').modal('hide');
+                    
+                    // 显示成功提示
+                    showSuccessMessage('已连接到Geth,当前区块: ' + blockNumber);
+                    
+                    // 更新页面状态
+                    updatePageStatus(blockNumber);
+                }, 3000);
+            }
+        });
+    } catch (error) {
+        console.error('Web3初始化错误:', error);
+        $('#status-text').text('❌ Web3初始化失败');
+        $('#error-message').text('错误: ' + error.message).show();
+        $('#connectwarning').modal('show');
+    }
+}
+
+function retryConnection() {
+    $('#status-text').text('重新连接中...');
+    $('#error-message').hide();
+    connectToLocalGeth();
+}
+
+function showSuccessMessage(message) {
+    var msgDiv = $('<div/>', {
+        id: 'success-message',
+        css: {
+            position: 'fixed',
+            top: '20px',
+            right: '20px',
+            background: '#4CAF50',
+            color: 'white',
+            padding: '15px',
+            borderRadius: '5px',
+            zIndex: '10000',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+        },
+        html: '<strong>✅ 连接成功</strong><br>' + message
+    });
+    
+    $('body').append(msgDiv);
+    
+    setTimeout(function() {
+        msgDiv.fadeOut(500, function() {
+            $(this).remove();
+        });
+    }, 5000);
+}
+
+function updatePageStatus(blockNumber) {
+    // 在导航栏添加状态显示
+    var statusHtml = '<div class="navbar-text" style="margin-left: 20px;">' +
+                     '<span style="color: #4CAF50;">🟢 已连接</span>' +
+                     '<span style="margin-left: 15px; color: #666;">区块: ' + blockNumber + '</span>' +
+                     '</div>';
+    
+    // 如果已有状态显示，更新它；否则添加新的
+    var existingStatus = $('.navbar-text:contains("已连接")');
+    if (existingStatus.length) {
+        existingStatus.html('<span style="color: #4CAF50;">🟢 已连接</span>' +
+                          '<span style="margin-left: 15px; color: #666;">区块: ' + blockNumber + '</span>');
+    } else {
+        $('.navbar-collapse').append(statusHtml);
+    }
+}
+
+// 定期检查连接状态
+setInterval(function() {
+    if (window.web3 && window.web3.eth) {
+        window.web3.eth.getBlockNumber(function(err, blockNumber) {
+            if (!err) {
+                updatePageStatus(blockNumber);
+            }
+        });
+    }
+}, 10000);
 </script>
 </body>
 </html>

@@ -2,11 +2,11 @@
 
 ![EthExplorer Screenshot](http://i.imgur.com/NHFYq0x.png)
 
-##License
+## License
 
 GPL (see LICENSE)
 
-##Installation
+## Installation
 
 Install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git "Git installation") if you haven't already
 
@@ -27,3 +27,4 @@ Then visit http://localhost:8000 in your browser of choice. You might get an err
 Install [geth](https://github.com/ethereum/go-ethereum/wiki/Building-Ethereum "Geth install") if you don't already have it, then run the above command.
 
 Then refresh the page in your browser 
+修改了标题和描述，标题和描述，搜索框提示，搜索按钮，页脚部分，模态框标题，在页脚后添加时间更新脚本
